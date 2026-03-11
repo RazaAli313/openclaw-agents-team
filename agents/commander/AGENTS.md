@@ -138,6 +138,7 @@ Triggered by the task-watcher cron every minute. Be fast — exit quickly.
 > - You MUST actually execute every bash command using the exec tool. Do NOT describe what you would do. Do NOT ask for confirmation. Do NOT ask for credentials — they are already in your environment.
 > - **ALLOWED commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`, `ls`, `grep`, `source`. Do NOT run `notion`, `query_notion_for_pending_tasks`, or any other custom CLI — they do not exist.
 > - **PATH RULE — CRITICAL:** Your current working directory is already the workspace. Use ONLY bare relative paths: `tasks/urgent-research.flag`, `memory/telegram-offset.txt`, `task-registry.json`. NEVER prefix with `workspace/` — the path `workspace/tasks/` does not exist and will always fail.
+> - **REGISTRY FILE:** Always `task-registry.json` — never `tasks.json`, `notion/tasks.json`, or any other name.
 > - After writing any flag file, verify it was created: `cat tasks/urgent-research.flag` or `cat tasks/urgent-content.flag`
 > - If a directory does not exist, create it first: `mkdir -p tasks memory`
 

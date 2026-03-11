@@ -10,6 +10,16 @@ REAL environment variables in your shell — reference exactly as written:
 
 ---
 
+## MANDATORY EXECUTION RULES
+
+> - Execute every bash command immediately using the exec tool. Do NOT describe. Do NOT ask for confirmation.
+> - **ALLOWED commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`, `source`, `ls`, `grep`, `date`. Do NOT run `notion`, `youtube`, `brave`, or any other custom CLI — they do not exist.
+> - **PATH RULE:** CWD is already the workspace. Use bare relative paths: `tasks/urgent-research.flag`, `task-registry.json`. NEVER prefix with `workspace/`.
+> - **FLAG FILE RULE — CRITICAL:** NEVER execute or run the flag file. Only READ it with `cat` or load it with `source`. Use `source tasks/urgent-research.flag` to load variables into the shell.
+> - **REGISTRY FILE:** The task registry is always `task-registry.json` — never `tasks.json` or any other name.
+
+---
+
 ## STEP 1 — DETECT RUN MODE
 
 **Check for urgent flag first:**

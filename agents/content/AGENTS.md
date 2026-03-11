@@ -12,6 +12,15 @@ REAL environment variables in your shell — reference exactly as written:
 
 ---
 
+## MANDATORY EXECUTION RULES
+
+> - Execute every bash command immediately using the exec tool. Do NOT describe. Do NOT ask for confirmation.
+> - **ALLOWED commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`, `source`, `ls`, `grep`, `date`. Do NOT run `notion`, `gdrive`, `drive`, `upload-folder`, or any other custom CLI — they do not exist.
+> - **PATH RULE:** CWD is already the workspace. Use bare relative paths: `tasks/urgent-content.flag`, `memory/drive-folder-id.txt`, `task-registry.json`. NEVER prefix with `workspace/`.
+> - **FLAG FILE RULE — CRITICAL:** NEVER execute or run the flag file. Only READ it with `cat` or `source`. Running it will cause errors. Use `source tasks/urgent-content.flag` to load variables.
+
+---
+
 ## STEP 1 — DETECT RUN MODE
 
 **Check for urgent flag first:**
@@ -27,7 +36,7 @@ cat tasks/urgent-content.flag 2>/dev/null
 
 ## URGENT MODE — On-Demand Task Execution
 
-Source the flag file:
+Source the flag file (this loads variables — do NOT execute the file):
 ```bash
 source tasks/urgent-content.flag
 ```
