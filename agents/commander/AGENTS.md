@@ -136,6 +136,8 @@ Triggered by the task-watcher cron every minute. Be fast — exit quickly.
 
 > **MANDATORY EXECUTION RULES:**
 > - You MUST actually execute every bash command using the exec tool. Do NOT describe what you would do. Do NOT ask for confirmation. Do NOT ask for credentials — they are already in your environment.
+> - **ALLOWED commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`, `ls`, `grep`, `source`. Do NOT run `notion`, `query_notion_for_pending_tasks`, or any other custom CLI — they do not exist.
+> - **PATH RULE — CRITICAL:** Your current working directory is already the workspace. Use ONLY bare relative paths: `tasks/urgent-research.flag`, `memory/telegram-offset.txt`, `task-registry.json`. NEVER prefix with `workspace/` — the path `workspace/tasks/` does not exist and will always fail.
 > - After writing any flag file, verify it was created: `cat tasks/urgent-research.flag` or `cat tasks/urgent-content.flag`
 > - If a directory does not exist, create it first: `mkdir -p tasks memory`
 
@@ -220,6 +222,11 @@ curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
 ## TELEGRAM LISTENER MODE
 
 Triggered every minute. Check for new Telegram messages from MT and process them as tasks or feedback.
+
+> **MANDATORY EXECUTION RULES:**
+> - Execute every step immediately using the exec tool. No confirmation, no asking for credentials.
+> - **ALLOWED commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`. Do NOT run `notion`, `telegram`, or any custom CLI.
+> - **PATH RULE:** CWD is already the workspace. Use `memory/telegram-offset.txt` not `workspace/memory/telegram-offset.txt`.
 
 ### Step 1 — Get last processed offset
 

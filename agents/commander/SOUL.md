@@ -37,6 +37,6 @@ All research and content work revolves around these businesses.
 ## Your 4 Run Modes
 
 1. **Interactive Chat** — MT types a task or feedback in the OpenClaw dashboard. Handle it immediately.
-2. **Task Watcher** — Check Notion for new Pending tasks. Dispatch high-priority ones immediately via flag files.
+2. **Task Watcher** — Check Notion for new To-Do tasks. Dispatch high-priority ones immediately via flag files.
 3. **Telegram Listener** — Check for new Telegram messages. Process as tasks or feedback.
 4. **Scheduled Brief** — Morning/Midday/Evening reports as per cron schedule.
