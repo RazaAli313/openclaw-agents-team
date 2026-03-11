@@ -1,0 +1,125 @@
+{
+  "env": {
+    "MINIMAX_API_KEY": "${MINIMAX_API_KEY}",
+    "GEMINI_API_KEY": "${GEMINI_API_KEY}",
+    "NOTION_API_KEY": "${NOTION_API_KEY}",
+    "YOUTUBE_API_KEY": "${YOUTUBE_API_KEY}",
+    "BRAVE_SEARCH_API_KEY": "${BRAVE_SEARCH_API_KEY}",
+    "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}",
+    "TELEGRAM_CHAT_ID": "${TELEGRAM_CHAT_ID}",
+    "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+    "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+    "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}",
+    "GOOGLE_REFRESH_TOKEN": "${GOOGLE_REFRESH_TOKEN}",
+    "STRIPE_SECRET_KEY": "${STRIPE_SECRET_KEY}"
+  },
+
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "auth": {
+      "mode": "token",
+      "token": "REPLACE_WITH_AUTH_TOKEN"
+    },
+    "controlUi": {
+      "allowInsecureAuth": true
+    }
+  },
+
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "minimax": {
+        "baseUrl": "https://api.minimax.io/anthropic",
+        "apiKey": "${MINIMAX_API_KEY}",
+        "api": "anthropic-messages",
+        "models": [
+          {
+            "id": "MiniMax-M2.1",
+            "name": "MiniMax M2.1",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": { "input": 15, "output": 60, "cacheRead": 2, "cacheWrite": 10 },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "MODEL_PLACEHOLDER"
+      },
+      "heartbeat": {
+        "every": "0m"
+      }
+    },
+    "list": [
+      {
+        "id": "commander",
+        "name": "Commander",
+        "default": true,
+        "workspace": "~/.openclaw/workspace",
+        "agentDir": "~/.openclaw/agents/commander/agent",
+        "sandbox": { "mode": "off" },
+        "tools": {
+          "allow": ["read", "write", "exec"],
+          "deny": ["browser", "apply_patch"]
+        }
+      },
+      {
+        "id": "research",
+        "name": "Research",
+        "workspace": "~/.openclaw/workspace",
+        "agentDir": "~/.openclaw/agents/research/agent",
+        "sandbox": { "mode": "off" },
+        "tools": {
+          "allow": ["read", "write", "exec", "browser"],
+          "deny": ["apply_patch"]
+        }
+      },
+      {
+        "id": "content",
+        "name": "Content",
+        "workspace": "~/.openclaw/workspace",
+        "agentDir": "~/.openclaw/agents/content/agent",
+        "sandbox": { "mode": "off" },
+        "tools": {
+          "allow": ["read", "write", "edit", "exec"],
+          "deny": ["browser", "apply_patch"]
+        }
+      },
+      {
+        "id": "performance",
+        "name": "Performance",
+        "workspace": "~/.openclaw/workspace",
+        "agentDir": "~/.openclaw/agents/performance/agent",
+        "sandbox": { "mode": "off" },
+        "tools": {
+          "allow": ["read", "write", "exec"],
+          "deny": ["browser", "apply_patch"]
+        }
+      }
+    ]
+  },
+
+  "cron": {
+    "enabled": true,
+    "maxConcurrentRuns": 4,
+    "sessionRetention": "24h"
+  },
+
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "allowlist",
+      "groupPolicy": "allowlist",
+      "streaming": "partial",
+      "allowFrom": ["${TELEGRAM_CHAT_ID}"],
+      "groupAllowFrom": ["${TELEGRAM_CHAT_ID}"]
+    }
+  }
+}

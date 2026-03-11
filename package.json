@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.1.50",
+    "openclaw": "^2026.2.19-2"
+  }
+}
