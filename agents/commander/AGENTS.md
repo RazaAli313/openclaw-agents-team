@@ -134,6 +134,11 @@ FLAGEOF
 
 Triggered by the task-watcher cron every minute. Be fast — exit quickly.
 
+> **MANDATORY EXECUTION RULES:**
+> - You MUST actually execute every bash command using the exec tool. Do NOT describe what you would do. Do NOT ask for confirmation. Do NOT ask for credentials — they are already in your environment.
+> - After writing any flag file, verify it was created: `cat tasks/urgent-research.flag` or `cat tasks/urgent-content.flag`
+> - If a directory does not exist, create it first: `mkdir -p tasks memory`
+
 ### Step 1 — Find all databases
 
 ```bash
@@ -146,17 +151,17 @@ curl -s "https://api.notion.com/v1/search" \
 
 Find the database with title containing "Task" or "Tasks". Note its `id` as TASKS_DB_ID.
 
-### Step 2 — Query for Pending tasks
+### Step 2 — Query for To-Do tasks
 
 ```bash
 curl -s -X POST "https://api.notion.com/v1/databases/TASKS_DB_ID/query" \
   -H "Authorization: Bearer $NOTION_API_KEY" \
   -H "Notion-Version: 2022-06-28" \
   -H "Content-Type: application/json" \
-  -d '{"filter":{"property":"Status","select":{"equals":"Pending"}}}'
+  -d '{"filter":{"property":"Status","select":{"equals":"To-Do"}}}'
 ```
 
-### Step 3 — Process each Pending task
+### Step 3 — Process each To-Do task
 
 For each task found in results:
 
@@ -177,7 +182,21 @@ curl -s -X PATCH "https://api.notion.com/v1/pages/NOTION_TASK_ID" \
 
 2. Create result page in Notion (same as Interactive Chat Mode Step 2A item 1).
 
-3. Write appropriate flag file (urgent-research.flag or urgent-content.flag).
+3. Ensure the tasks directory exists, then write the flag file using the exec tool:
+
+```bash
+mkdir -p tasks
+cat > tasks/urgent-research.flag << 'FLAGEOF'
+TASK_TITLE=REPLACE_WITH_TASK_TITLE
+NOTION_PAGE_ID=REPLACE_WITH_PAGE_ID
+NOTION_TASK_ID=REPLACE_WITH_TASK_ID
+ITERATION_NUM=1
+USER_INSTRUCTION=REPLACE_WITH_INSTRUCTION
+FEEDBACK=
+FLAGEOF
+```
+
+Use `tasks/urgent-content.flag` instead if the task is for the content agent. After writing, verify: `cat tasks/urgent-research.flag` — if the file is empty or missing, write it again.
 
 4. Update task-registry.json.
 
@@ -211,9 +230,13 @@ cat memory/telegram-offset.txt 2>/dev/null || echo "0"
 ### Step 2 — Get new updates
 
 ```bash
+mkdir -p memory
 OFFSET=$(cat memory/telegram-offset.txt 2>/dev/null || echo "0")
-curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getUpdates?offset=$OFFSET&timeout=0"
+BOT_TOKEN="${TELEGRAM_BOT_TOKEN}"
+curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${OFFSET}&timeout=0"
 ```
+
+If the curl response contains `{"ok":false` or `"Not Found"`, the token is not resolving. In that case, stop and report: "TELEGRAM_BOT_TOKEN env var is empty in this session."
 
 ### Step 3 — Process messages
 
@@ -349,7 +372,7 @@ curl -s -X PATCH "https://api.notion.com/v1/pages/TASK_PAGE_ID" \
   -d '{"properties":{"Status":{"select":{"name":"Running"}}}}'
 ```
 
-Valid status values: `Pending`, `Queued`, `Running`, `Complete`
+Valid status values: `To-Do`, `Queued`, `Running`, `Complete`
 
 ---
 
