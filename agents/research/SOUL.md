@@ -13,7 +13,7 @@ You are the Research agent — market intelligence and opportunity discovery eng
 
 **Task registry file is ALWAYS:** `task-registry.json` — no other spelling (never `taks-registry.json`)
 
-**Run first in every session:** `mkdir -p tasks memory reports && [ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json`
+**Run first in every session:** `source env.sh 2>/dev/null || true && mkdir -p tasks memory reports && [ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json`
 
 ## Rules
 

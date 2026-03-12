@@ -16,6 +16,7 @@
 
 **Run this at the start of EVERY session before touching any files:**
 ```bash
+source env.sh 2>/dev/null || true
 mkdir -p tasks memory briefs reports content
 [ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json
 [ -f memory/telegram-offset.txt ] || echo "0" > memory/telegram-offset.txt
@@ -118,10 +119,17 @@ Note: If the registry already has entries, merge them — do not overwrite exist
 ```bash
 curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
   -H "Content-Type: application/json" \
-  -d "{\"chat_id\":\"$TELEGRAM_CHAT_ID\",\"text\":\"✅ Task received: TASK_TITLE\\n\\nAssigned to: AGENT_NAME\\nNotion result page: https://notion.so/NOTION_PAGE_ID_NO_DASHES\\nResults will appear there when complete.\"}"
+  -d "{\"chat_id\":\"$TELEGRAM_CHAT_ID\",\"text\":\"✅ Task received: TASK_TITLE\\n\\nAgent: AGENT_NAME\\n📄 Notion page (link is clickable):\\nhttps://notion.so/NOTION_PAGE_ID_NO_DASHES\\n\\nResults appear there within 1 minute.\"}"
 ```
 
-6. **Reply to MT in chat**: "Task received and assigned to [Research/Content] agent. Results will appear in Notion: [page title]. I've also sent you a Telegram confirmation."
+6. **Reply to MT in chat** — ALWAYS include the full clickable Notion URL, never just the ID:
+"Task received and assigned to [Research/Content] agent.
+
+📄 Notion page: https://notion.so/[PAGE_ID_WITH_DASHES_REMOVED]
+
+Results will appear there within 1 minute. I've also sent you a Telegram confirmation."
+
+**Notion URL format rule:** Take the page ID (e.g. `a1b2c3d4-e5f6-7890-abcd-ef1234567890`), remove all dashes → `a1b2c3d4e5f678890abcdef1234567890`, then prepend `https://notion.so/`.
 
 ### Step 2B — If FEEDBACK / ITERATION
 
@@ -149,7 +157,11 @@ FLAGEOF
 
 3. **Update task-registry.json** — increment iteration count, set status to "running".
 
-4. **Send Telegram and reply in chat**: "Got it. Running a new search with your feedback. Results will be added as Section [N] on the same Notion page."
+4. **Send Telegram and reply in chat** — always include the full Notion URL:
+"Got it. Running a new search with your feedback.
+
+📄 Results will be added as Section [N] on the same Notion page:
+https://notion.so/[PAGE_ID_NO_DASHES]"
 
 ---
 
@@ -177,21 +189,35 @@ curl -s "https://api.notion.com/v1/search" \
 
 Find the database with title containing "Task" or "Tasks". Note its `id` as TASKS_DB_ID.
 
-### Step 2 — Query for To-Do tasks
+### Step 2 — Query for pending tasks
+
+Run TWO queries to catch both "To-Do" and "Pending" status values (user may use either):
 
 ```bash
+# Query 1 — "To-Do" status
 curl -s -X POST "https://api.notion.com/v1/databases/TASKS_DB_ID/query" \
   -H "Authorization: Bearer $NOTION_API_KEY" \
   -H "Notion-Version: 2022-06-28" \
   -H "Content-Type: application/json" \
   -d '{"filter":{"property":"Status","select":{"equals":"To-Do"}}}'
+
+# Query 2 — "Pending" status
+curl -s -X POST "https://api.notion.com/v1/databases/TASKS_DB_ID/query" \
+  -H "Authorization: Bearer $NOTION_API_KEY" \
+  -H "Notion-Version: 2022-06-28" \
+  -H "Content-Type: application/json" \
+  -d '{"filter":{"property":"Status","select":{"equals":"Pending"}}}'
 ```
 
-### Step 3 — Process each To-Do task
+Merge the results from both queries. Process all tasks found.
+
+### Step 3 — Process each pending task
 
 For each task found in results:
 
 - Extract: task ID (`id`), Title (`properties.Name.title[0].plain_text` or similar), Priority (`properties.Priority.select.name`), Agent (`properties.Agent.select.name`), Notes (`properties.Notes.rich_text[0].plain_text` if present)
+- If `Agent` field is empty or not set, default to: Research for research/data tasks, Content for content/creative tasks
+- Check `task-registry.json` — skip this task if it already has an entry (already dispatched)
 - Check `task-registry.json` — skip this task if it already has an entry (already dispatched)
 
 **If Priority = "High":**
@@ -403,7 +429,7 @@ curl -s -X PATCH "https://api.notion.com/v1/pages/TASK_PAGE_ID" \
   -d '{"properties":{"Status":{"select":{"name":"Running"}}}}'
 ```
 
-Valid status values: `To-Do`, `Queued`, `Running`, `Complete`
+Valid status values: `To-Do`, `Pending`, `Queued`, `Running`, `Complete`
 
 ---
 

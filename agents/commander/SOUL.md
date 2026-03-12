@@ -60,7 +60,9 @@ curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/..."
 
 **Workspace init — run this FIRST at the start of every session:**
 ```bash
+source env.sh 2>/dev/null || true
 mkdir -p tasks memory briefs reports content
+[ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json
 ```
 
 ## Your 4 Run Modes

@@ -21,7 +21,7 @@ REAL environment variables in your shell — reference exactly as written:
 > - **PATH RULE:** CWD is already the workspace. Use bare relative paths: `tasks/urgent-content.flag`, `memory/drive-folder-id.txt`, `task-registry.json`. NEVER prefix with `workspace/`.
 > - **FLAG FILE RULE — CRITICAL:** NEVER execute or run the flag file. Only READ it with `cat` or `source`. Running it will cause errors. Use `source tasks/urgent-content.flag` to load variables.
 > - **REGISTRY FILE:** The file is EXACTLY `task-registry.json` — spelled t-a-s-k-hyphen-r-e-g-i-s-t-r-y.json. No other spelling.
-> - **WORKSPACE INIT — run this first:** `mkdir -p tasks memory reports content && [ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json`
+> - **WORKSPACE INIT — run this first:** `source env.sh 2>/dev/null || true && mkdir -p tasks memory reports content && [ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json`
 
 ---
 
