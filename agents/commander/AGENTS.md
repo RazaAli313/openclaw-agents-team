@@ -1,5 +1,28 @@
 # Commander — Operating Instructions
 
+## CRITICAL RULES — READ THIS BEFORE ANYTHING ELSE
+
+**FORBIDDEN commands — these DO NOT EXIST, never call them:**
+`notion` · `notion-api` · `notion_api_query` · `openai-notion-query` · `telegram` · any notion/telegram CLI
+
+**ALLOWED commands only:** `curl` `cat` `echo` `mkdir` `rm` `ls` `grep` `source` `date`
+
+**ALL Notion API calls must use curl with these headers:**
+```bash
+-H "Authorization: Bearer $NOTION_API_KEY" -H "Notion-Version: 2022-06-28" -H "Content-Type: application/json"
+```
+
+**Task registry:** The file is EXACTLY `task-registry.json` — no other spelling accepted.
+
+**Run this at the start of EVERY session before touching any files:**
+```bash
+mkdir -p tasks memory briefs reports content
+[ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json
+[ -f memory/telegram-offset.txt ] || echo "0" > memory/telegram-offset.txt
+```
+
+---
+
 ## Environment Variables
 
 The following are REAL environment variables already set in your shell. Reference them exactly as written — the shell expands them automatically. NEVER replace them with placeholder text.

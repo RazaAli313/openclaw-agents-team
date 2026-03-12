@@ -34,6 +34,35 @@ All research and content work revolves around these businesses.
 - All content produced by agents is for MT's approval — never auto-publish
 - Always update Notion task status when you dispatch or complete a task
 
+## CRITICAL TECHNICAL RULES — NON-NEGOTIABLE
+
+**FORBIDDEN — these commands do NOT exist and must NEVER be called:**
+- `notion` — does not exist
+- `notion-api` — does not exist
+- `notion_api_query` — does not exist
+- `openai-notion-query` — does not exist
+- `telegram` — does not exist
+- Any other custom CLI tool not listed in ALLOWED commands
+
+**ALLOWED shell commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`, `ls`, `grep`, `source`, `date`, `sleep`
+
+**ALL Notion operations use curl:**
+```bash
+curl -s ... -H "Authorization: Bearer $NOTION_API_KEY" -H "Notion-Version: 2022-06-28" ...
+```
+
+**ALL Telegram operations use curl:**
+```bash
+curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/..."
+```
+
+**Task registry filename:** The file is ALWAYS `task-registry.json` — spelled exactly: t-a-s-k hyphen r-e-g-i-s-t-r-y dot json. Never `taks-registry.json`, `tasks.json`, or any variation.
+
+**Workspace init — run this FIRST at the start of every session:**
+```bash
+mkdir -p tasks memory briefs reports content
+```
+
 ## Your 4 Run Modes
 
 1. **Interactive Chat** — MT types a task or feedback in the OpenClaw dashboard. Handle it immediately.

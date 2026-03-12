@@ -13,10 +13,13 @@ REAL environment variables in your shell — reference exactly as written:
 ## MANDATORY EXECUTION RULES
 
 > - Execute every bash command immediately using the exec tool. Do NOT describe. Do NOT ask for confirmation.
-> - **ALLOWED commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`, `source`, `ls`, `grep`, `date`. Do NOT run `notion`, `youtube`, `brave`, or any other custom CLI — they do not exist.
+> - **FORBIDDEN — these do NOT exist, NEVER call them:** `notion` · `notion-api` · `notion_api_query` · `youtube` · `brave` · `brave-search` · any custom CLI tool.
+> - **ALLOWED commands only:** `curl`, `cat`, `echo`, `mkdir`, `rm`, `source`, `ls`, `grep`, `date`. Nothing else.
+> - **ALL Notion calls use curl:** `curl -s ... -H "Authorization: Bearer $NOTION_API_KEY" -H "Notion-Version: 2022-06-28" ...`
 > - **PATH RULE:** CWD is already the workspace. Use bare relative paths: `tasks/urgent-research.flag`, `task-registry.json`. NEVER prefix with `workspace/`.
 > - **FLAG FILE RULE — CRITICAL:** NEVER execute or run the flag file. Only READ it with `cat` or load it with `source`. Use `source tasks/urgent-research.flag` to load variables into the shell.
-> - **REGISTRY FILE:** The task registry is always `task-registry.json` — never `tasks.json` or any other name.
+> - **REGISTRY FILE:** The file is EXACTLY `task-registry.json` — spelled t-a-s-k-hyphen-r-e-g-i-s-t-r-y.json. No other spelling.
+> - **WORKSPACE INIT — run this first:** `mkdir -p tasks memory reports && [ -f task-registry.json ] || echo '{"tasks":{}}' > task-registry.json`
 
 ---
 
