@@ -116,11 +116,18 @@ REMEMBER: Keep `$OPENAI_API_KEY` exactly as written.
 
 After generating a DALL-E image, upload it to Google Drive so the link is permanent.
 
+**CRITICAL: NEVER ask the user for Google credentials. They are already in your environment as `$GOOGLE_CLIENT_ID`, `$GOOGLE_CLIENT_SECRET`, `$GOOGLE_REFRESH_TOKEN`. Just use them directly in the curl command below. Do NOT ask for a refresh token — you already have it.**
+
 ### Step 1 — Get Google Access Token
+
+Use separate `-d` flags (do NOT join them into one string):
 
 ```bash
 ACCESS_TOKEN=$(curl -s -X POST "https://oauth2.googleapis.com/token" \
-  -d "client_id=$GOOGLE_CLIENT_ID&client_secret=$GOOGLE_CLIENT_SECRET&refresh_token=$GOOGLE_REFRESH_TOKEN&grant_type=refresh_token" \
+  -d "grant_type=refresh_token" \
+  -d "client_id=$GOOGLE_CLIENT_ID" \
+  -d "client_secret=$GOOGLE_CLIENT_SECRET" \
+  -d "refresh_token=$GOOGLE_REFRESH_TOKEN" \
   | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
 echo "Access token obtained: ${ACCESS_TOKEN:0:20}..."
 ```
