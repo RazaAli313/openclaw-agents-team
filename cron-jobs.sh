@@ -123,7 +123,7 @@ else
     --cron "0 8 * * *" --tz "UTC" \
     --session isolated --agent commander \
     "${DELIVERY_FLAGS[@]}" \
-    --message "SCHEDULED_BRIEF: Morning report. Query Notion API for all current tasks (To-Do, In progress, Done). Read reports/research-latest.md, reports/content-latest.md, and reports/performance-latest.md. Identify bottlenecks. Write Morning Brief to briefs/YYYY-MM-DD-morning.md with 3 actionable decisions for MT. Write task assignments to tasks/research-task.md and tasks/content-task.md. Send morning Telegram report to MT with: completed work summary, top 3 actions for today, and 2-3 suggested tasks MT can approve by replying." \
+    --message "SCHEDULED_BRIEF morning: source env.sh 2>/dev/null || true. CRITICAL: ALL commands use curl only — FORBIDDEN: notion, telegram, brew, or any custom CLI (they do not exist). Query Notion tasks: curl -s https://api.notion.com/v1/search -H 'Authorization: Bearer \$NOTION_API_KEY' -H 'Notion-Version: 2022-06-28' -H 'Content-Type: application/json' -d '{\"filter\":{\"property\":\"object\",\"value\":\"database\"}}'. Read reports/research-latest.md (skip if missing). Write briefs/YYYY-MM-DD-morning.md with 3 actionable decisions. Write tasks/research-task.md and tasks/content-task.md. Send Telegram via curl: curl -s -X POST https://api.telegram.org/bot\$TELEGRAM_BOT_TOKEN/sendMessage -H 'Content-Type: application/json' -d '{\"chat_id\":\"\$TELEGRAM_CHAT_ID\",\"text\":\"morning report text\"}'." \
     2>/dev/null && echo "  08:00 commander-morning — OK" || echo "  commander-morning — exists/failed"
 fi
 
@@ -135,7 +135,7 @@ else
     --cron "0 13 * * *" --tz "UTC" \
     --session isolated --agent research \
     "${DELIVERY_FLAGS[@]}" \
-    --message "SCHEDULED_MODE: Read tasks/research-task.md. Focus on competitor analysis and market expansion. Search for competitor apps, pricing gaps, new markets, language opportunities. Analyze 30-40 sources. Append findings to reports/research-YYYY-MM-DD-midday.md and update reports/research-latest.md. Create or update a Notion page with competitor analysis table." \
+    --message "SCHEDULED_MODE research midday: source env.sh 2>/dev/null || true. FORBIDDEN: notion, brave, youtube CLIs — use curl only. Read tasks/research-task.md. Search using Brave: curl -s 'https://api.search.brave.com/res/v1/web/search?q=QUERY&count=20' -H 'X-Subscription-Token: \$BRAVE_SEARCH_API_KEY'. Analyze 30-40 sources. Write reports/research-YYYY-MM-DD-midday.md and reports/research-latest.md. Create Notion page via curl POST to https://api.notion.com/v1/pages with parent page_id \$NOTION_RESULTS_PAGE_ID." \
     2>/dev/null && echo "  13:00 research-midday — OK" || echo "  research-midday — exists/failed"
 fi
 
@@ -147,7 +147,7 @@ else
     --cron "0 14 * * *" --tz "UTC" \
     --session isolated --agent commander \
     "${DELIVERY_FLAGS[@]}" \
-    --message "SCHEDULED_BRIEF: Quick midday check. Read reports/research-latest.md for new findings. If urgent opportunities found, update tasks/content-task.md with priority items. Write brief status to briefs/YYYY-MM-DD-midday.md." \
+    --message "SCHEDULED_BRIEF midday: source env.sh 2>/dev/null || true. CRITICAL: ALL commands use curl only — FORBIDDEN: notion, telegram, brew, or any custom CLI (they do not exist). Read reports/research-latest.md (skip if missing). Update tasks/content-task.md if urgent. Write briefs/YYYY-MM-DD-midday.md. Send Telegram update via curl: curl -s -X POST https://api.telegram.org/bot\$TELEGRAM_BOT_TOKEN/sendMessage -H 'Content-Type: application/json' -d '{\"chat_id\":\"\$TELEGRAM_CHAT_ID\",\"text\":\"midday update\"}'." \
     2>/dev/null && echo "  14:00 commander-midday — OK" || echo "  commander-midday — exists/failed"
 fi
 
@@ -159,7 +159,7 @@ else
     --cron "0 17 * * *" --tz "UTC" \
     --session isolated --agent research \
     "${DELIVERY_FLAGS[@]}" \
-    --message "SCHEDULED_MODE: Read tasks/research-task.md. Final scan: trending content from today, viral posts from last 24h, new hooks and emotional triggers. Analyze 20-30 sources. Write to reports/research-YYYY-MM-DD-evening.md and update reports/research-latest.md with full day summary. Create Notion page with trending hooks table." \
+    --message "SCHEDULED_MODE research evening: source env.sh 2>/dev/null || true. FORBIDDEN: notion, brave, youtube CLIs — use curl only. Read tasks/research-task.md. Search trending content using Brave curl API. Analyze 20-30 sources. Write reports/research-YYYY-MM-DD-evening.md and reports/research-latest.md. Create Notion page via curl POST with parent page_id \$NOTION_RESULTS_PAGE_ID." \
     2>/dev/null && echo "  17:00 research-evening — OK" || echo "  research-evening — exists/failed"
 fi
 
@@ -171,7 +171,7 @@ else
     --cron "0 18 * * *" --tz "UTC" \
     --session isolated --agent content \
     "${DELIVERY_FLAGS[@]}" \
-    --message "SCHEDULED_MODE: Read tasks/content-task.md and reports/research-latest.md. Generate: 3+ TikTok hook scripts, 2 Reddit posts, 1 LinkedIn thread, 1 email draft. Create 2 variations of best hooks. Generate 1-2 DALL-E images: download each, upload to Google Drive 'OpenClaw Content' folder, get shareable links. Write all content to content/ directory. Create a Notion page titled 'Content Batch — YYYY-MM-DD' with a table of all produced assets including Google Drive links for images. Write detailed summary to reports/content-latest.md. Mark everything PR PENDING." \
+    --message "SCHEDULED_MODE content: source env.sh 2>/dev/null || true. FORBIDDEN: notion, gdrive, drive CLIs — use curl only. Read tasks/content-task.md. Write 3+ TikTok scripts, 2 Reddit posts, 1 LinkedIn thread. Generate DALL-E image: curl -s https://api.openai.com/v1/images/generations -H 'Authorization: Bearer \$OPENAI_API_KEY'. Download image, get Google token via curl to oauth2.googleapis.com/token, upload to Drive via curl multipart POST. Create Notion page via curl POST with parent page_id \$NOTION_RESULTS_PAGE_ID. Insert table with Drive links. Mark PR PENDING." \
     2>/dev/null && echo "  18:00 content-afternoon — OK" || echo "  content-afternoon — exists/failed"
 fi
 
@@ -183,7 +183,7 @@ else
     --cron "0 21 * * *" --tz "UTC" \
     --session isolated --agent commander \
     "${DELIVERY_FLAGS[@]}" \
-    --message "SCHEDULED_BRIEF: Evening report. Review all reports/ from today. Tally: sources analyzed, content pieces produced, Notion pages created, images generated. Write Evening Report to briefs/YYYY-MM-DD-evening.md. Update tasks/research-task.md and tasks/content-task.md with refined keywords and priorities for tomorrow. Send Telegram evening report to MT: day summary, what was completed, suggested tasks for tomorrow with instructions to reply to approve." \
+    --message "SCHEDULED_BRIEF evening: source env.sh 2>/dev/null || true. CRITICAL: ALL commands use curl only — FORBIDDEN: notion, telegram, brew, or any custom CLI (they do not exist). Review reports/ from today. Write briefs/YYYY-MM-DD-evening.md. Update tasks/research-task.md and tasks/content-task.md for tomorrow. Send Telegram evening report via curl: curl -s -X POST https://api.telegram.org/bot\$TELEGRAM_BOT_TOKEN/sendMessage -H 'Content-Type: application/json' -d '{\"chat_id\":\"\$TELEGRAM_CHAT_ID\",\"text\":\"evening report\"}'." \
     2>/dev/null && echo "  21:00 commander-evening — OK" || echo "  commander-evening — exists/failed"
 fi
 
