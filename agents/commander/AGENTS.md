@@ -58,16 +58,18 @@ Read the message. Determine:
 
 ### Step 2A — If NEW TASK
 
-1. **Create the Notion result page** (Commander creates it now so the page ID is known before the agent runs):
+1. **Create the Notion result page** under the OpenClaw Results parent:
 
 ```bash
 RESULT=$(curl -s -X POST "https://api.notion.com/v1/pages" \
   -H "Authorization: Bearer $NOTION_API_KEY" \
   -H "Notion-Version: 2022-06-28" \
   -H "Content-Type: application/json" \
-  -d "{\"parent\":{\"type\":\"workspace\",\"workspace\":true},\"properties\":{\"title\":{\"title\":[{\"type\":\"text\",\"text\":{\"content\":\"TASK_TITLE_HERE\"}}]}}}")
+  -d "{\"parent\":{\"type\":\"page_id\",\"page_id\":\"$NOTION_RESULTS_PAGE_ID\"},\"properties\":{\"title\":{\"title\":[{\"type\":\"text\",\"text\":{\"content\":\"TASK_TITLE_HERE\"}}]}}}")
 echo "$RESULT"
 ```
+
+**Never use `"type":"workspace"` — always use `$NOTION_RESULTS_PAGE_ID` as parent.**
 
 Extract the `id` field from the JSON response — this is the NOTION_PAGE_ID.
 
@@ -395,25 +397,17 @@ curl -s "https://api.notion.com/v1/databases/TASKS_DB_ID" \
 
 Extract `parent.page_id` from the response. This is the PARENT_PAGE_ID where you will create result pages (same parent as the tasks database).
 
-**Step 2: Create the result page under that parent:**
+**Step 2: Create the result page under the OpenClaw Results parent:**
 
 ```bash
 curl -s -X POST "https://api.notion.com/v1/pages" \
   -H "Authorization: Bearer $NOTION_API_KEY" \
   -H "Notion-Version: 2022-06-28" \
   -H "Content-Type: application/json" \
-  -d "{\"parent\":{\"type\":\"page_id\",\"page_id\":\"PARENT_PAGE_ID\"},\"properties\":{\"title\":{\"title\":[{\"type\":\"text\",\"text\":{\"content\":\"PAGE_TITLE_HERE\"}}]}}}"
+  -d "{\"parent\":{\"type\":\"page_id\",\"page_id\":\"$NOTION_RESULTS_PAGE_ID\"},\"properties\":{\"title\":{\"title\":[{\"type\":\"text\",\"text\":{\"content\":\"PAGE_TITLE_HERE\"}}]}}}"
 ```
 
-**Fallback: If parent page not found or access denied**, try workspace root:
-
-```bash
-curl -s -X POST "https://api.notion.com/v1/pages" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2022-06-28" \
-  -H "Content-Type: application/json" \
-  -d "{\"parent\":{\"type\":\"workspace\",\"workspace\":true},\"properties\":{\"title\":{\"title\":[{\"type\":\"text\",\"text\":{\"content\":\"PAGE_TITLE_HERE\"}}]}}}"
-```
+**IMPORTANT:** Always use `$NOTION_RESULTS_PAGE_ID` as the parent. NEVER use `"type":"workspace"` — internal integrations cannot create workspace-level pages.
 
 The response contains the page `id`. Save it as the NOTION_PAGE_ID for this task.
 

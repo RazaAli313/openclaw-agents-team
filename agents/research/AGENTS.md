@@ -162,16 +162,18 @@ This is MANDATORY after every research run. All results must go to Notion.
 
 ### Case A: New Research (NOTION_PAGE_ID is empty or this is a scheduled run)
 
-First create a page:
+First create a page under the OpenClaw Results parent:
 
 ```bash
 PAGE_RESULT=$(curl -s -X POST "https://api.notion.com/v1/pages" \
   -H "Authorization: Bearer $NOTION_API_KEY" \
   -H "Notion-Version: 2022-06-28" \
   -H "Content-Type: application/json" \
-  -d "{\"parent\":{\"type\":\"workspace\",\"workspace\":true},\"properties\":{\"title\":{\"title\":[{\"type\":\"text\",\"text\":{\"content\":\"$TASK_TITLE\"}}]}}}")
+  -d "{\"parent\":{\"type\":\"page_id\",\"page_id\":\"$NOTION_RESULTS_PAGE_ID\"},\"properties\":{\"title\":{\"title\":[{\"type\":\"text\",\"text\":{\"content\":\"$TASK_TITLE\"}}]}}}")
 echo "$PAGE_RESULT"
 ```
+
+**Always use `$NOTION_RESULTS_PAGE_ID` as parent. Never use workspace root.**
 
 Extract the `id` from the response — save it as NEW_PAGE_ID.
 
